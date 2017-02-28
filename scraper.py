@@ -1,6 +1,6 @@
 import sys, os, urllib.request
 
-# M3U8 class with everything that is needed for downloading and scraping...
+# M3U8 class with everything that is needed for parsing and downloading....
 class LinkScrape:
     def __init__(self, indexLink, name):
         # initial constructor
@@ -48,10 +48,4 @@ class LinkScrape:
         # creates filename including local dir based on url
         return self.Name + '/' + self.Name + '_' + link.split('/')[-1].split('?')[0]
 
-
-links = ['http://artelive-lh.akamaihd.net/i/artelive_de@393591/index_3_av-b.m3u8?sd=10&rebase=on']
-link = 'http://artelive-lh.akamaihd.net/i/artelive_de@393591/index_3_av-b.m3u8?sd=10&rebase=on'
-arte = LinkScrape(link, "arte")
-arte.parse()
-arte.download()
 
