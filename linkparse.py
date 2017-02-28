@@ -1,23 +1,35 @@
-import sys, os, urllib.request
+import sys, os, urllib.request, time
+from threading import Thread
 
 # M3U8 class with everything that is needed for parsing and downloading....
-class LinkScrape:
-    def __init__(self, indexLink, name):
+class Linkparse(Thread):
+    def __init__(self, name, indexlink):
         # initial constructor
-        self.FilesLinks = []
-        self.Link = indexLink
-        self.Name = name
+        Thread.__init__(self)
+        self.fileslink = []
+        self.link = indexlink
+        self.name = name
+        self.sleeptime = 0
+
+    def run(self):
+        while True:
+            self.parse()
+            self.download()
+            time.sleep(self.sleeptime)
+            self.sleeptime = 0
+            self.fileslink = []
 
     def parse(self):
         # parse through file, checking for links
         try :
-            lines = urllib.request.urlopen(self.Link).readlines()
+            lines = urllib.request.urlopen(self.link).readlines()
             # Check for valid file format
             if lines[0].decode('utf-8').startswith('#EXTM3U'):
                 for line in lines:
                     line=line.decode('utf-8').strip()
                     if not line.startswith('#'):
-                        self.FilesLinks.append(line)
+                        self.fileslink.append(line)
+                        self.sleeptime += 9
             else:
                 print("File not valid!")
         except urllib.error.URLError as e:
@@ -26,7 +38,7 @@ class LinkScrape:
     def download(self):
         self.checkdir()
         # Iterates through array of parsed links
-        for downloadLink in self.FilesLinks:
+        for downloadLink in self.fileslink:
             filename = self.createfilename(downloadLink)
             # Downloads video file
             if not os.path.exists(filename):
@@ -40,12 +52,11 @@ class LinkScrape:
 
     def checkdir(self):
         # checks if dir with name exists already and creates a new one if needed
-        if not os.path.exists(self.Name):
-            os.makedirs(self.Name)
+        if not os.path.exists(self.name):
+            os.makedirs(self.name)
             return
 
     def createfilename(self, link):
         # creates filename including local dir based on url
-        return self.Name + '/' + self.Name + '_' + link.split('/')[-1].split('?')[0]
-
+        return self.name + '/' + self.name + '_' + link.split('/')[-1].split('?')[0]
 
