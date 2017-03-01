@@ -28,6 +28,7 @@ class Linkparse(Thread):
                 for line in lines:
                     line=line.decode('utf-8').strip()
                     if line.startswith('#EXTINF:'):
+                        # reads sequene lenght from EXTINF
                         self.sleeptime += int(line.split(':')[1].split('.')[0]) * 0.95
                     if not line.startswith('#'):
                         self.fileslink.append(line)
