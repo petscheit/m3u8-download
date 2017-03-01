@@ -12,26 +12,24 @@ class Getframes():
     self.q = []
     self.dir = dir
     self.workers = workers
-    command = ['/usr/local/bin/ffmpeg', '-i', 'arte/arte_segment148830616_3_av-b.ts',  '-vf', 'fps=1', '-strftime', '1', "test_%02d.jpg"]
-    subprocess.call(command)
-
 
   def main(self):
     self.queue()
+    # Create proccess pool and call render method
     with concurrent.futures.ProcessPoolExecutor(self.workers) as executor:
         for video in self.q:
           print(video)
           executor.submit(self.renderframes, video)
 
   def queue(self):
+    # Add all files in specified dir to array
     for file in os.listdir(self.dir):
       self.q.append(self.dir + '/' + file)
 
   @staticmethod
   def renderframes(video):
-      print('arrived')
+      # use regex to get timestamp from file name and call processing package
       name = re.findall(r'\d{9}', video)[0]
-      print(video)
       command = [FFMPEG_PATH, '-i', video,  '-vf', 'fps=1', '-strftime', '1', "huhuhuhuhu_%02d.jpg"]
       subprocess.call(command)
 
