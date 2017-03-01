@@ -27,9 +27,10 @@ class Linkparse(Thread):
             if lines[0].decode('utf-8').startswith('#EXTM3U'):
                 for line in lines:
                     line=line.decode('utf-8').strip()
+                    if line.startswith('#EXTINF:'):
+                        self.sleeptime += int(line.split(':')[1].split('.')[0]) * 0.95
                     if not line.startswith('#'):
                         self.fileslink.append(line)
-                        self.sleeptime += 9
             else:
                 print("File not valid!")
         except urllib.error.URLError as e:
@@ -60,3 +61,5 @@ class Linkparse(Thread):
         # creates filename including local dir based on url
         return self.name + '/' + self.name + '_' + link.split('/')[-1].split('?')[0]
 
+arte = Linkparse('arte', 'http://artelive-lh.akamaihd.net/i/artelive_de@393591/index_3_av-b.m3u8?sd=10&rebase=on')
+arte.start()
